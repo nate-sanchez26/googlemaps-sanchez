@@ -1,0 +1,57 @@
+  /* * {
+    border: 5px solid gray;
+  } */
+  
+  #map {
+    height: 800px;
+    width: 100%;
+  }
+
+  html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  .header {
+    text-align: center;
+  }
+
+  #restaurantType {
+    padding: 5px;
+    margin-top: 10px;
+    margin-left: 5px;
+    width: 200px;
+  }
+
+  #directionControl {
+    margin-top: 20px;
+    margin-left: 5px;
+  }
+
+  #output {
+    background-color: white;
+    margin-top: 20px;
+    margin-left: 20px;
+    opacity: 100;
+    width: 300px; 
+    float: right;
+  }
+
+  .form-control {
+    background-color: white;
+  }
+
+  #getDirections {
+    margin-top: 10px;
+  }
+
+  #polygonInfo {
+    background-color: white;
+    margin-top: 20px;
+    margin-left: 20px;
+    opacity: 100;
+    width: 300px; 
+    float: right;
+    text-align: center;
+  }
