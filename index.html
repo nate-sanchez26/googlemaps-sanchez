@@ -14,56 +14,60 @@
     <div class="header">
       <h1>Google Maps API Test</h1>
     </div>
-    
-    <!--Restaurant type filter-->
-    <div id="restaurantTypeContainer" class="container">
-      <div class="col-md-3">
-        <div class="mapWrap">
-          <!--Dropdown-->  
-            <select id="restaurantType" class="form-select" onchange="filterMarkers(this.value);">  
-                <option value="">Select Restaurant Type</option>
-                <option value="hotel">hotel</option>
-                <option value="bar">bar</option>
-                <option value="cafe">cafe</option>
-                <option value="bakery">bakery</option>
-            </select>
-        </div>
-      </div>
-    </div>
 
-    <div id="directionControl" class="container">
-      <!--Directions Control:
-      Note: these are disabled-->
-      <form class="form-horizontal">
-        <div class="form-group">
+      <div >
+        <!--Directions Control:
+        Note: these are disabled-->
+        <form class="form-vertical" id="leftControl">
+          <div class="form-group">
 
-          <div class="col-md-3">
-            <label for="from" class="form-label">Origin</label>
-            <input disabled type="text" class="form-control" id="from" placeholder="Origin">
+            <!--Restaurant type filter-->
+            <div id="restaurantTypeContainer">
+              <div class="col-md-3">
+                <div>
+                  <!--Dropdown-->  
+                  <select id="restaurantType" class="form-select" onchange="filterMarkers(this.value);">  
+                    <option value="">Select Restaurant Type</option>
+                    <option value="hotel">hotel</option>
+                    <option value="bar">bar</option>
+                    <option value="cafe">cafe</option>
+                    <option value="bakery">bakery</option>
+                  </select>
+                  <!--end-->
+                </div>
+              </div>
+            </div>
+            <!--end-->
+
+            <div id="directionContainer">
+              <div class="col-md-12">
+                <label for="from" class="form-label">Origin</label>
+                <input disabled type="text" class="form-control" id="from" placeholder="Origin">
+              </div>
+
+              <div class="col-md-12">
+                <label for="to" class="form-label">Destination</label>
+                <input disabled type="text" class="form-control" id="to" placeholder="Click on a marker to set.">
+              </div>
+            </div>
+
           </div>
-
-          <div class="col-md-3">
-            <label for="to" class="form-label">Destination</label>
-            <input disabled type="text" class="form-control" id="to" placeholder="Click on a marker to set destination">
-          </div>
-
-        </div>
-      </form>
-
-      <!--Directions Button-->
-      <div class="col-xs-offset-2 col-xs-10 mt-10 mb-10">
-        <button id="getDirections" class="btn btn-light" onclick="calcRoute();">Get Directions</button>
-      </div>
+        </form>
+        <!--end-->    
     </div>
 
     <div class="container">
       <!--map container-->
       <div id="map"></div>
+
       <!--directions panel-->
-      <div id="output"></div>
+      <div id="output" display="none"></div>
+
+      <!--Restaurant counter display-->
       <div id="polygonInfo">
-        <p>(Click multiple points on the map to plot area!)</p>
         <h5>Restaurants in Area:</h5>
+        <p>0</p>
+        <button class='btn btn-outline-primary' onclick="resetCounter();">Reset</button>
       </div>
     </div>
     
@@ -81,7 +85,7 @@
   
   <!--Maps API-->
   <script async defer
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyArEjW087KeeC_eNwZiZtilcJxpAdn2kSY&libraries=directions,places&callback=initMap">
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyArEjW087KeeC_eNwZiZtilcJxpAdn2kSY&libraries=directions,places,drawing&callback=initMap">
   </script>
 
 </body>

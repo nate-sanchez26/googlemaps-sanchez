@@ -9,7 +9,7 @@ const cebu = {lat:10.318813401005881, lng:123.90501611051401};
 
 //map options
 const mapOptions = {
-  zoom: 15,
+  zoom: 14,
   center: cebu,
   disableDefaultUI: true,
 };
@@ -18,6 +18,7 @@ const mapOptions = {
 var directionsService;
 var directionsDisplay;
 var placesService;
+var drawingManager;
 
 //request body variables
 var markerRequest;
@@ -112,6 +113,17 @@ function initMap() {
   directionPanel = document.getElementById('output');
   polygonPanel = document.getElementById('polygonInfo');
 
+  drawingManager = new google.maps.drawing.DrawingManager({
+    drawingMode: google.maps.drawing.OverlayType.POLYGON,
+    drawingControl: true,
+    drawingControlOptions: {
+      position: google.maps.ControlPosition.TOP_CENTER,
+      drawingModes: [
+        google.maps.drawing.OverlayType.POLYGON,
+      ],
+    },
+  });
+
   //retrieve all restaurants within 2200 radius
   markerRequest = {
     location: cebu,
@@ -129,16 +141,16 @@ function initMap() {
   console.log(markers);
 
   //push custom controls to the map
-  map.controls[google.maps.ControlPosition.TOP_LEFT].push(restaurantTypeControl);
-
-  map.controls[google.maps.ControlPosition.LEFT].push(directionControl);
+  map.controls[google.maps.ControlPosition.TOP_LEFT].push(leftControl);
 
   map.controls[google.maps.ControlPosition.RIGHT].push(directionPanel);
+  directionPanel.style.display = 'none';
 
-  map.controls[google.maps.ControlPosition.TOP].push(polygonPanel);
+  map.controls[google.maps.ControlPosition.LEFT].push(polygonPanel);
+  
+  drawingManager.setMap(map);
 
   countArea();
-  
 };
 
 function calcRoute() {
@@ -155,12 +167,18 @@ function calcRoute() {
   directionsService.route(routeRequest, (result,status) => {
     if (status == google.maps.DirectionsStatus.OK) {
       
-      const output = document.querySelector('#output');
-      output.innerHTML = null;
+      directionPanel.innerHTML = null;
 
       //display waypoint panel
-      directionsDisplay.setPanel(document.getElementById('output'));
-      
+      directionsDisplay.setPanel(directionPanel);
+      directionPanel.style.display = "block";
+
+      directionPanel.innerHTML = 
+      "<div class='col-md-1 offset-md-11'>" + 
+        "<button type='button' class='btn-close' onclick='closePanel();'>" +
+        '</button>' + 
+      '</div>';
+
       //draw polyline on map
       directionsDisplay.setDirections(result);
 
@@ -168,9 +186,9 @@ function calcRoute() {
       //when there is an error retrieving route
       directionsDisplay.setDirections({ routes: []});
 
-      map.setCenter(cebu);
+      map.panTo(cebu);
 
-      output.innerHTML =
+      directionPanel.innerHTML =
       "<div class='alert-danger'><p1>Error Retrieving Directions</p></div>";
     }
   });
@@ -184,17 +202,28 @@ function plotMarkers(restaurants, infoWindow) {
   var restaurantPosition = restaurants.geometry.location;
   var icon = 'https://maps.google.com/mapfiles/kml/pushpin/blue-pushpin.png'
   var restaurantInfo = 
-  '<h4>' + restaurantTitle + '</h4>' +
-	'<p>' + restaurantType +
-		'<br />' +
-	'</p>';
+  '<div>' +
+    '<h4>' + restaurantTitle + '</h4>' +
+    '<p>' + restaurantType +
+      '<br />' +
+    '</p>' +
+
+    "<div class='col-xs-offset-2 col-xs-10 mt-10 mb-10'>" + 
+      "<button id='getDirections' class='btn btn-outline-primary' onclick='calcRoute();'>" +
+      
+      'Get Directions' +
+      
+      '</button>' + 
+    '</div>' +
+  '</div>';
   
     marker = new google.maps.Marker({
       title: restaurantTitle,
       position: restaurantPosition,
       icon:icon,
       map:map,
-      type:restaurantType
+      type:restaurantType,
+      animation:google.maps.Animation.DROP
     });
 
     //add a click event that pops up an infowindow and sets destination
@@ -203,7 +232,10 @@ function plotMarkers(restaurants, infoWindow) {
       infoWindow.setContent(restaurantInfo);
       infoWindow.open(map, this);
       currentMarker = restaurantTitle;
+      map.panTo(restaurantPosition);
       console.log(currentMarker);
+
+      //set destination
       const toInput = document.getElementById("to");
       toInput.value=currentMarker;
 
@@ -279,6 +311,7 @@ function filterMarkers(category) {
 };
 
 function countArea() {
+
   polygon = new google.maps.Polygon({
     strokeColor: "#1E41AA",
     strokeOpacity: 1.0,
@@ -288,24 +321,54 @@ function countArea() {
     fillOpacity: 0.6
   });
 
-  poly = polygon.getPath();
+  google.maps.event.addListener(drawingManager, 'overlaycomplete', addPolyPoints);
 
-  function addPolyPoints(e) {
-    poly.push(e.latLng);
-    var markerCnt = 0;
-    for (var i=0; i<markers.length; i++) {
-      if (google.maps.geometry.poly.containsLocation(markers[i].getPosition(), polygon) && markers[i].visible == true) {
-      markerCnt++;
-      }
-    }
-    polygonPanel.innerHTML = 
-    "<p>(Click multiple points on the map to plot area!)</p>" +
-    "<h5>Restaurants in Area:</h5> "+markerCnt;
-  };
-
-  google.maps.event.addListener(map, 'click', addPolyPoints);
-
-  google.maps.event.addListener(polygon, 'click', function() {
-    this.setMap(null);
-  });
+  // google.maps.event.addListener(map, 'click', addPolyPoints);
 }
+
+//helper functions
+function closePanel() {
+  directionPanel.innerHTML = null;
+  directionPanel.style.display = "none";
+  infoWindow.close();
+  directionsDisplay.setMap(null);
+  map.panTo(cebu);
+  map.setZoom(14);
+}
+
+function addPolyPoints(e) {
+  poly = e.overlay.getPaths();
+  var markerCnt = 0;
+
+  for (var i=0; i < markers.length; i++) {
+    if (google.maps.geometry.poly.containsLocation(markers[i].getPosition(), drawingManager) && 
+    markers[i].visible == true) {
+      markerCnt++;
+    }
+  }
+
+  polygonPanel.innerHTML = 
+  "<p>(Click multiple points on the map to plot area!)</p>" +
+  "<h5>Restaurants in Area:</h5> "+
+  '<p>'+
+  markerCnt +
+  '</p>'+
+  "<button class='btn btn-outline-primary' onclick='resetCounter();'>Reset</button>";
+};
+
+function resetCounter() {
+    drawingManager.setMap(null);
+    markerCnt = 0;
+
+    polygonPanel.innerHTML = 
+      "<p>(Click multiple points on the map to plot area!)</p>" +
+      "<h5>Restaurants in Area:</h5> "+
+      '<p>'+
+      markerCnt +
+      '</p>'+
+      "<button class='btn btn-outline-primary' onclick='resetCounter();'>Reset</button>";
+
+    countArea();
+    map.panTo(cebu);
+    map.setZoom(14);
+};

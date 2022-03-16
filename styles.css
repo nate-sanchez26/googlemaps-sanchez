@@ -1,9 +1,9 @@
-  /* * {
+   /* * {
     border: 5px solid gray;
-  } */
+  }  */
   
   #map {
-    height: 800px;
+    height: 700px;
     width: 100%;
   }
 
@@ -20,22 +20,19 @@
   #restaurantType {
     padding: 5px;
     margin-top: 10px;
-    margin-left: 5px;
-    width: 200px;
-  }
-
-  #directionControl {
-    margin-top: 20px;
-    margin-left: 5px;
+    width: 210px;
   }
 
   #output {
     background-color: white;
     margin-top: 20px;
-    margin-left: 20px;
-    opacity: 100;
+    margin-right: 20px;
+    opacity: 80%;
     width: 300px; 
     float: right;
+    padding: 10px;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    border-radius: 10px;
   }
 
   .form-control {
@@ -48,10 +45,33 @@
 
   #polygonInfo {
     background-color: white;
+    padding: 10px;
     margin-top: 20px;
     margin-left: 20px;
-    opacity: 100;
-    width: 300px; 
+    opacity: 80%;
+    width: 225px; 
     float: right;
     text-align: center;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    border-radius: 10px;
+  }
+
+  #leftControl {
+    background-color: white;
+    padding: 3px;
+    margin: 20px;
+    border: 1px gray;
+    opacity: 80%;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    border-radius: 10px;
+  }
+
+  #restaurantTypeContainer {
+    padding: 5px;
+    margin-bottom: 10px;
+  }
+
+  #directionContainer {
+    padding: 5px;
+    margin-bottom: 10px;
   }
