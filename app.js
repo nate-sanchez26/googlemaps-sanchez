@@ -1,6 +1,7 @@
 let map;
 //markers array to be used for filtering
 var markers = [];
+
 //will keep the value of the current marker
 var currentMarker;
 
@@ -114,7 +115,6 @@ function initMap() {
   polygonPanel = document.getElementById('polygonInfo');
 
   drawingManager = new google.maps.drawing.DrawingManager({
-    drawingMode: google.maps.drawing.OverlayType.POLYGON,
     drawingControl: true,
     drawingControlOptions: {
       position: google.maps.ControlPosition.TOP_CENTER,
@@ -200,7 +200,7 @@ function plotMarkers(restaurants, infoWindow) {
   var restaurantType = restaurants.types;
   var restaurantTitle = restaurants.name;
   var restaurantPosition = restaurants.geometry.location;
-  var icon = 'https://maps.google.com/mapfiles/kml/pushpin/blue-pushpin.png'
+  var icon = 'http://maps.google.com/mapfiles/kml/pal2/icon55.png'
   var restaurantInfo = 
   '<div>' +
     '<h4>' + restaurantTitle + '</h4>' +
@@ -244,6 +244,47 @@ function plotMarkers(restaurants, infoWindow) {
     });
 
     markers.push(marker);
+};
+
+function countArea() {
+
+  polygon = new google.maps.Polygon({
+    strokeColor: "#1E41AA",
+    strokeOpacity: 1.0,
+    strokeWeight: 3,
+    map: map,
+    fillColor: "#FF0000",
+    fillOpacity: 0.6
+  });
+
+  google.maps.event.addListener(drawingManager, 'overlaycomplete', addPolyPoints);
+
+  // google.maps.event.addListener(map, 'click', addPolyPoints);
+}
+
+//helper functions
+function addPolyPoints(e) {
+  poly = e.overlay.getPath();
+
+  polygon.setPaths(poly);
+
+  e.overlay.setMap(null);
+
+  var markerCnt = 0;
+
+  for (var i=0; i < markers.length; i++) {
+    if (google.maps.geometry.poly.containsLocation(markers[i].getPosition(), polygon) && 
+    markers[i].visible == true) {
+      markerCnt++;
+    }
+  }
+
+  polygonPanel.innerHTML = 
+  "<h5>Restaurants in Area:</h5> "+
+  '<p>'+
+  markerCnt +
+  '</p>'+
+  "<button class='btn btn-outline-primary' onclick='resetCounter();'>Reset</button>";
 };
 
 //filter restaurants according to type
@@ -310,58 +351,11 @@ function filterMarkers(category) {
   }
 };
 
-function countArea() {
-
-  polygon = new google.maps.Polygon({
-    strokeColor: "#1E41AA",
-    strokeOpacity: 1.0,
-    strokeWeight: 3,
-    map: map,
-    fillColor: "#FF0000",
-    fillOpacity: 0.6
-  });
-
-  google.maps.event.addListener(drawingManager, 'overlaycomplete', addPolyPoints);
-
-  // google.maps.event.addListener(map, 'click', addPolyPoints);
-}
-
-//helper functions
-function closePanel() {
-  directionPanel.innerHTML = null;
-  directionPanel.style.display = "none";
-  infoWindow.close();
-  directionsDisplay.setMap(null);
-  map.panTo(cebu);
-  map.setZoom(14);
-}
-
-function addPolyPoints(e) {
-  poly = e.overlay.getPaths();
-  var markerCnt = 0;
-
-  for (var i=0; i < markers.length; i++) {
-    if (google.maps.geometry.poly.containsLocation(markers[i].getPosition(), drawingManager) && 
-    markers[i].visible == true) {
-      markerCnt++;
-    }
-  }
-
-  polygonPanel.innerHTML = 
-  "<p>(Click multiple points on the map to plot area!)</p>" +
-  "<h5>Restaurants in Area:</h5> "+
-  '<p>'+
-  markerCnt +
-  '</p>'+
-  "<button class='btn btn-outline-primary' onclick='resetCounter();'>Reset</button>";
-};
-
 function resetCounter() {
-    drawingManager.setMap(null);
+    polygon.setMap(null);
     markerCnt = 0;
 
     polygonPanel.innerHTML = 
-      "<p>(Click multiple points on the map to plot area!)</p>" +
       "<h5>Restaurants in Area:</h5> "+
       '<p>'+
       markerCnt +
@@ -371,4 +365,13 @@ function resetCounter() {
     countArea();
     map.panTo(cebu);
     map.setZoom(14);
+};
+
+function closePanel() {
+  directionPanel.innerHTML = null;
+  directionPanel.style.display = "none";
+  infoWindow.close();
+  directionsDisplay.setMap(null);
+  map.panTo(cebu);
+  map.setZoom(14);
 };
