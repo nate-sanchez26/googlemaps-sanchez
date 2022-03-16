@@ -18,6 +18,7 @@ const mapOptions = {
 var directionsService;
 var directionsDisplay;
 var placesService;
+var drawingManager;
 
 //request body variables
 var markerRequest;
@@ -112,6 +113,17 @@ function initMap() {
   directionPanel = document.getElementById('output');
   polygonPanel = document.getElementById('polygonInfo');
 
+  drawingManager = new google.maps.drawing.DrawingManager({
+    drawingMode: google.maps.drawing.OverlayType.POLYGON,
+    drawingControl: true,
+    drawingControlOptions: {
+      position: google.maps.ControlPosition.TOP_CENTER,
+      drawingModes: [
+        google.maps.drawing.OverlayType.POLYGON,
+      ],
+    },
+  });
+
   //retrieve all restaurants within 2200 radius
   markerRequest = {
     location: cebu,
@@ -134,12 +146,11 @@ function initMap() {
   map.controls[google.maps.ControlPosition.RIGHT].push(directionPanel);
   directionPanel.style.display = 'none';
 
-  map.controls[google.maps.ControlPosition.TOP].push(polygonPanel);
+  map.controls[google.maps.ControlPosition.LEFT].push(polygonPanel);
+  
+  drawingManager.setMap(map);
 
   countArea();
-
-  google.maps.event.addListener(this.polygon, 'click', resetCounter);
-  
 };
 
 function calcRoute() {
@@ -167,7 +178,7 @@ function calcRoute() {
         "<button type='button' class='btn-close' onclick='closePanel();'>" +
         '</button>' + 
       '</div>';
-      
+
       //draw polyline on map
       directionsDisplay.setDirections(result);
 
@@ -310,9 +321,9 @@ function countArea() {
     fillOpacity: 0.6
   });
 
-  poly = polygon.getPath();
+  google.maps.event.addListener(drawingManager, 'overlaycomplete', addPolyPoints);
 
-  google.maps.event.addListener(map, 'click', addPolyPoints);
+  // google.maps.event.addListener(map, 'click', addPolyPoints);
 }
 
 //helper functions
@@ -320,15 +331,18 @@ function closePanel() {
   directionPanel.innerHTML = null;
   directionPanel.style.display = "none";
   infoWindow.close();
+  directionsDisplay.setMap(null);
   map.panTo(cebu);
   map.setZoom(14);
 }
 
 function addPolyPoints(e) {
-  poly.push(e.latLng);
+  poly = e.overlay.getPaths();
   var markerCnt = 0;
-  for (var i=0; i<markers.length; i++) {
-    if (google.maps.geometry.poly.containsLocation(markers[i].getPosition(), polygon) && markers[i].visible == true) {
+
+  for (var i=0; i < markers.length; i++) {
+    if (google.maps.geometry.poly.containsLocation(markers[i].getPosition(), drawingManager) && 
+    markers[i].visible == true) {
       markerCnt++;
     }
   }
@@ -343,7 +357,7 @@ function addPolyPoints(e) {
 };
 
 function resetCounter() {
-    polygon.setMap(null);
+    drawingManager.setMap(null);
     markerCnt = 0;
 
     polygonPanel.innerHTML = 
