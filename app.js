@@ -3,7 +3,8 @@ let map;
 var markers = [];
 
 //will keep the value of the current marker
-var currentMarker;
+var currentMarkerID;
+var currentMarkerName;
 
 //map center
 const cebu = {lat:10.318813401005881, lng:123.90501611051401};
@@ -114,43 +115,30 @@ function initMap() {
   directionPanel = document.getElementById('output');
   polygonPanel = document.getElementById('polygonInfo');
 
-  drawingManager = new google.maps.drawing.DrawingManager({
-    drawingControl: true,
-    drawingControlOptions: {
-      position: google.maps.ControlPosition.TOP_CENTER,
-      drawingModes: [
-        google.maps.drawing.OverlayType.POLYGON,
-      ],
-    },
-  });
-
   //retrieve all restaurants within 2200 radius
   markerRequest = {
     location: cebu,
-    radius: 10000,
+    radius: 2200,
     type: "restaurant",
   };
+
+  //drawing manager for polygon drawing
+  initializePolygon();
+
+  //creates a new polygon and listener for drawing polygons
+  setCountArea();
   
+  //plot multiple restaurants across Cebu City
   placesService.nearbySearch(markerRequest, (result) => {
-    //plot multiple restaurants across Cebu City
     for (let i = 0; i < result.length; i++) {
-      plotMarkers(result[i], infoWindow);
+      plotMarkers(result[i], infoWindow, i);
     }
   });
 
   console.log(markers);
 
   //push custom controls to the map
-  map.controls[google.maps.ControlPosition.TOP_LEFT].push(leftControl);
-
-  map.controls[google.maps.ControlPosition.RIGHT].push(directionPanel);
-  directionPanel.style.display = 'none';
-
-  map.controls[google.maps.ControlPosition.LEFT].push(polygonPanel);
-  
-  drawingManager.setMap(map);
-
-  countArea();
+  setMapControls ();
 };
 
 function calcRoute() {
@@ -158,8 +146,8 @@ function calcRoute() {
   directionsDisplay.setMap(map);
 
   routeRequest = {
-    origin: document.getElementById("from").value,
-    destination: document.getElementById("to").value,
+    origin: "Mactan-Cebu International Airport",
+    destination: {placeId: currentMarkerID},
     travelMode: google.maps.TravelMode.DRIVING,
     unitSystem: google.maps.UnitSystem.IMPERIAL,
   }
@@ -195,26 +183,36 @@ function calcRoute() {
 };
 
 //function to plot markers and infoWindows
-function plotMarkers(restaurants, infoWindow) {
+function plotMarkers(result, infoWindow) {
 
-  var restaurantType = restaurants.types;
-  var restaurantTitle = restaurants.name;
-  var restaurantPosition = restaurants.geometry.location;
-  var icon = 'http://maps.google.com/mapfiles/kml/pal2/icon55.png'
-  var restaurantInfo = 
+  //private variables for EACH marker to be pushed in array
+  var restaurantID = result.place_id;
+  var restaurantType = result.types;
+  var restaurantTitle = result.name;
+  var restaurantPosition = result.geometry.location;
+  var icon = 'http://maps.google.com/mapfiles/kml/pal2/icon46.png';
+  var restaurantInfo;
+
+  var placeDetailsRequest = {
+    placeId: restaurantID,
+    fields: ['icon', 'opening_hours', 'formatted_phone_number', 'formatted_address', 'website', 'rating']
+  };
+  
+  restaurantInfo = 
   '<div>' +
     '<h4>' + restaurantTitle + '</h4>' +
     '<p>' + restaurantType +
       '<br />' +
     '</p>' +
 
-    "<div class='col-xs-offset-2 col-xs-10 mt-10 mb-10'>" + 
-      "<button id='getDirections' class='btn btn-outline-primary' onclick='calcRoute();'>" +
-      
-      'Get Directions' +
-      
-      '</button>' + 
-    '</div>' +
+    "<div class='infoButtons'>" +
+      "<div class='col-xs-10'>" + 
+        "<button id='getDirections' class='btn btn-outline-primary' onclick='calcRoute();'>" +
+          'Get Directions' +
+        '</button>' + 
+      '</div>' +
+    "</div>" +
+    
   '</div>';
   
     marker = new google.maps.Marker({
@@ -226,27 +224,24 @@ function plotMarkers(restaurants, infoWindow) {
       animation:google.maps.Animation.DROP
     });
 
+    marker.visits = 0;
+    marker.specialties = [];
+
     //add a click event that pops up an infowindow and sets destination
     google.maps.event.addListener(marker, 'click', function(evt) {
       infoWindow.close();
       infoWindow.setContent(restaurantInfo);
       infoWindow.open(map, this);
-      currentMarker = restaurantTitle;
       map.panTo(restaurantPosition);
-      console.log(currentMarker);
+      map.setZoom(14);
 
-      //set destination
-      const toInput = document.getElementById("to");
-      toInput.value=currentMarker;
-
-      const fromInput = document.getElementById("from");
-      fromInput.value="Mactan-Cebu International Airport";
+      setNavigation (restaurantID, restaurantTitle, currentMarkerName);
     });
 
     markers.push(marker);
 };
 
-function countArea() {
+function setCountArea() {
 
   polygon = new google.maps.Polygon({
     strokeColor: "#1E41AA",
@@ -261,31 +256,6 @@ function countArea() {
 
   // google.maps.event.addListener(map, 'click', addPolyPoints);
 }
-
-//helper functions
-function addPolyPoints(e) {
-  poly = e.overlay.getPath();
-
-  polygon.setPaths(poly);
-
-  e.overlay.setMap(null);
-
-  var markerCnt = 0;
-
-  for (var i=0; i < markers.length; i++) {
-    if (google.maps.geometry.poly.containsLocation(markers[i].getPosition(), polygon) && 
-    markers[i].visible == true) {
-      markerCnt++;
-    }
-  }
-
-  polygonPanel.innerHTML = 
-  "<h5>Restaurants in Area:</h5> "+
-  '<p>'+
-  markerCnt +
-  '</p>'+
-  "<button class='btn btn-outline-primary' onclick='resetCounter();'>Reset</button>";
-};
 
 //filter restaurants according to type
 function filterMarkers(category) {
@@ -351,6 +321,44 @@ function filterMarkers(category) {
   }
 };
 
+//helper functions
+function addPolyPoints(e) {
+  poly = e.overlay.getPath();
+
+  polygon.setPaths(poly);
+
+  e.overlay.setMap(null);
+
+  var markerCnt = 0;
+
+  for (var i=0; i < markers.length; i++) {
+    if (google.maps.geometry.poly.containsLocation(markers[i].getPosition(), polygon) && 
+    markers[i].visible == true) {
+      markerCnt++;
+    }
+  }
+
+  polygonPanel.innerHTML = 
+  "<h5>Restaurants in Area:</h5> "+
+  '<p>'+
+  markerCnt +
+  '</p>'+
+  "<button class='btn btn-outline-primary' onclick='resetCounter();'>Reset</button>";
+};
+
+function setNavigation (restaurantID, restaurantTitle, currentMarkerName) {
+  currentMarkerID = restaurantID;
+  currentMarkerName = restaurantTitle;
+  console.log(currentMarkerName);
+
+  //set destination
+  const toInput = document.getElementById("to");
+  toInput.value=currentMarkerName;
+  //set origin 
+  const fromInput = document.getElementById("from");
+  fromInput.value="Mactan-Cebu International Airport";
+}
+
 function resetCounter() {
     polygon.setMap(null);
     markerCnt = 0;
@@ -362,7 +370,7 @@ function resetCounter() {
       '</p>'+
       "<button class='btn btn-outline-primary' onclick='resetCounter();'>Reset</button>";
 
-    countArea();
+    setCountArea();
     map.panTo(cebu);
     map.setZoom(14);
 };
@@ -375,3 +383,28 @@ function closePanel() {
   map.panTo(cebu);
   map.setZoom(14);
 };
+
+function initializePolygon () {
+  //drawing manager for polygon drawing
+  drawingManager = new google.maps.drawing.DrawingManager({
+    drawingControl: true,
+    drawingControlOptions: {
+      position: google.maps.ControlPosition.TOP_CENTER,
+      drawingModes: [
+        google.maps.drawing.OverlayType.POLYGON,
+      ],
+    },
+  });
+
+  drawingManager.setMap(map);
+}
+
+function setMapControls () {
+  //push custom controls to the map
+  map.controls[google.maps.ControlPosition.TOP_LEFT].push(leftControl);
+
+  map.controls[google.maps.ControlPosition.RIGHT].push(directionPanel);
+  directionPanel.style.display = 'none';
+
+  map.controls[google.maps.ControlPosition.LEFT].push(polygonPanel);
+}

@@ -3,8 +3,14 @@
   }  */
   
   #map {
-    height: 750px;
+    height: 790px;
     width: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Raleway';
+    font-size: 2.5rem;
   }
 
   html, body {
@@ -25,8 +31,8 @@
 
   #output {
     background-color: white;
-    margin-top: 20px;
-    margin-right: 20px;
+    margin-top: 10px;
+    margin-right: 10px;
     opacity: 80%;
     width: 300px; 
     float: right;
@@ -46,8 +52,8 @@
   #polygonInfo {
     background-color: white;
     padding: 10px;
-    margin-top: 20px;
-    margin-left: 20px;
+    margin-top: 5px;
+    margin-left: 10px;
     opacity: 80%;
     width: 225px; 
     float: right;
@@ -59,7 +65,7 @@
   #leftControl {
     background-color: white;
     padding: 3px;
-    margin: 20px;
+    margin: 10px;
     border: 1px gray;
     opacity: 80%;
     box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
@@ -74,4 +80,8 @@
   #directionContainer {
     padding: 5px;
     margin-bottom: 10px;
+  }
+
+  .infoButtons {
+    align-items: center;
   }
