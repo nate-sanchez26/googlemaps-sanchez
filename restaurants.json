@@ -6,7 +6,7 @@
       "lng":123.8851858195529
     }, 
     "info":{
-      "specialty":["Chickenjoy", "Burgers"], 
+      "specialty":["Fried Chicken", "Burgers"], 
       "type":"FastFood",
       "description": "The Philippines' most famous fastfood chain. Jollibee's signature products are their burgers and world-famous chickenjoy."
     },
@@ -160,7 +160,7 @@
       "lng":123.91893736318214       
     }, 
     "info":{
-      "specialty":["Samgyupsal"], 
+      "specialty":["Samgyeopsal"], 
       "type":"Korean",
       "description": "The best Korean Barbecue shop in the Philippines. They use briquettes for cooking which adds a smokey flavor to the cooked meats."
     },
@@ -174,7 +174,7 @@
       "lng":123.91929652661392
     }, 
     "info":{
-      "specialty":["Samgyupsal", "Kimchi Jjigae"], 
+      "specialty":["Samgyeopsal", "Kimchi Jjigae"], 
       "type":"Korean",
       "description": "One of the up and coming samgyupsal brands in the Philippines. They have, in my opinion, the best Kimchi jjigaes."
     },
@@ -277,5 +277,19 @@
       "description": "I love the Pizza at SnR. They also have other delicious offerings like the clam chowder and fried chicken"
     },
     "visits" : 102
+  },
+
+  {
+    "name":"Acacia Steakhouse", 
+    "coor":{
+      "lat":10.32316625275627, 
+      "lng":123.89190841272294
+    }, 
+    "info":{
+      "specialty":["Steak"], 
+      "type":"American/Western",
+      "description": "Acacia Steakhouse serves delicious steaks."
+    },
+    "visits" : 22
   }
 ]}

@@ -22,12 +22,10 @@ const mapOptions = {
 //variables for directions service and display
 var directionsService;
 var directionsDisplay;
-var placesService;
 var drawingManager;
-
-//request body variables
-var markerRequest;
-var routeRequest;
+var content;
+var pieChart;
+var myChart;
 
 //polygons and infowindows
 var polygon;
@@ -41,30 +39,36 @@ var directionControl;
 var directionPanel;
 var visitsPanel;
 
+//data calculation variables
+var fastFoodCount = 0;
+var chineseCount = 0; 
+var filipinoCount = 0; 
+var japaneseCount = 0; 
+var koreanCount = 0; 
+var americanCount = 0; 
+var beverageCount = 0;
+
+var chartData = [];
+
+var chartDataArray = [];
+
 //initialize map
 function initMap() {
   //variables for google maps and libraries
   map = new google.maps.Map(document.getElementById("map"), mapOptions);
   directionsService = new google.maps.DirectionsService();
   directionsDisplay = new google.maps.DirectionsRenderer();
+  placesService = new google.maps.places.PlacesService(map);
+
   infoWindow = new google.maps.InfoWindow({
     maxWidth: 295
   });
-  placesService = new google.maps.places.PlacesService(map);
 
   //variables for custom control panels on the map
-  restaurantTypeControl = document.getElementById('restaurantTypeContainer');
-  directionControl = document.getElementById('directionControl');
-  directionPanel = document.getElementById('output');
-  polygonPanel = document.getElementById('polygonInfo');
-  visitsPanel = document.getElementById('placeVisits');
-
-  //retrieve all restaurants within 2200 radius
-  // markerRequest = {
-  //   location: cebu,
-  //   radius: 2200,
-  //   type: "restaurant",
-  // };
+  restaurantTypeControl = document.getElementById("restaurantTypeContainer");
+  directionControl = document.getElementById("directionControl");
+  directionPanel = document.getElementById("output");
+  polygonPanel = document.getElementById("polygonInfo");
 
   //drawing manager for polygon drawing
   initializePolygon();
@@ -75,7 +79,6 @@ function initMap() {
   //plot multiple restaurants across Cebu City
   $.getJSON('./restaurants.json', function(result) {
     restoData = result.restaurants; 
-    console.log(restoData);
 
     for (let i = 0; i < restoData.length; i++) {
       plotMarkers(restoData[i], infoWindow, i);
@@ -83,10 +86,13 @@ function initMap() {
     
   });
 
-  console.log(markers);
-
-  //push custom controls to the map
-  setMapControls ();
+  window.onload = function() {
+    //setup the chart
+    loadPieChart();
+    //push custom controls to the map
+    setMapControls();
+  };  
+  
 };
 
 function calcRoute() {
@@ -137,16 +143,11 @@ function calcRoute() {
 //function to plot markers and infoWindows
 function plotMarkers(result, infoWindow, index) {
 
+  var i = index;
   //private variables for EACH marker to be pushed in array
-  //var restaurantID = result.place_id;
   var restaurantTitle = result.name;
   var restaurantPosition = result.coor;
   var restaurantVisits = result.visits;
-  var i = index;
-  console.log(index)
-
-
-
   var restaurantType = result.info.type;
   var restaurantDescription = result.info.description;
   var restaurantSpecialty = result.info.specialty;
@@ -180,7 +181,7 @@ function plotMarkers(result, infoWindow, index) {
     
     "<button id='getDirections' class='btn btn-outline-primary infoWindowButton' onclick='calcRoute();'>Get Directions</button>" +
 
-    "<button id='visitRestaurant' class='btn btn-outline-primary infoWindowButton'>Visit Restaurant</button>" +
+    "<button id='visitRestaurant' class='btn btn-outline-primary infoWindowButton' onclick='visitRestaurant("+index+");'>Visit Restaurant</button>" +
     
   '</div>';
   
@@ -193,12 +194,22 @@ function plotMarkers(result, infoWindow, index) {
       animation:google.maps.Animation.DROP
     });
 
+    marker.description = restaurantDescription;
+    marker.specialty = restaurantSpecialty;
     marker.visits = restaurantVisits;
+    marker.isEdited = false;
 
     //add a click event that pops up an infowindow and sets destination
     google.maps.event.addListener(marker, 'click', function(evt) {
+
       infoWindow.close();
-      infoWindow.setContent(restaurantInfo);
+
+      if(markers[i].isEdited) {
+        reloadInfoWindow(i);
+      } else {
+        infoWindow.setContent(restaurantInfo);
+      }
+      
       infoWindow.open(map, this);
       map.panTo(restaurantPosition);
       map.setZoom(15);
@@ -331,6 +342,8 @@ function filterMarkers(category) {
 };
 
 //helper functions
+
+//add the points of the drawing manager polygon to the polygon object
 function addPolyPoints(e) {
   poly = e.overlay.getPath();
 
@@ -355,12 +368,27 @@ function addPolyPoints(e) {
   "<button class='btn btn-outline-primary' onclick='resetCounter();'>Reset</button>";
 };
 
+//reset the marker counter polygon
+function resetCounter() {
+  polygon.setMap(null);
+  markerCnt = 0;
+
+  polygonPanel.innerHTML = 
+    "<h5>Restaurants in Area:</h5> "+
+    '<p>'+
+    markerCnt +
+    '</p>'+
+    "<button class='btn btn-outline-primary' onclick='resetCounter();'>Reset</button>";
+
+  setCountArea();
+  closePanel();
+};
+
+//set navigation origin and destination
 function setNavigation (restaurantTitle, restaurantPosition, currentMarkerName) {
   currentMarkerName = restaurantTitle;
   currentMarkerLat = restaurantPosition.lat;
   currentMarkerLng = restaurantPosition.lng;
-  
-  console.log(currentMarkerName);
 
   //set destination
   const toInput = document.getElementById("to");
@@ -370,22 +398,7 @@ function setNavigation (restaurantTitle, restaurantPosition, currentMarkerName) 
   fromInput.value="Mactan-Cebu International Airport";
 }
 
-function resetCounter() {
-    polygon.setMap(null);
-    markerCnt = 0;
-
-    polygonPanel.innerHTML = 
-      "<h5>Restaurants in Area:</h5> "+
-      '<p>'+
-      markerCnt +
-      '</p>'+
-      "<button class='btn btn-outline-primary' onclick='resetCounter();'>Reset</button>";
-
-    setCountArea();
-    map.panTo(cebu);
-    map.setZoom(14);
-};
-
+//close directions panel
 function closePanel() {
   directionPanel.innerHTML = null;
   directionPanel.style.display = "none";
@@ -395,6 +408,7 @@ function closePanel() {
   map.setZoom(14);
 };
 
+//create polygon
 function initializePolygon () {
   //drawing manager for polygon drawing
   drawingManager = new google.maps.drawing.DrawingManager({
@@ -410,6 +424,7 @@ function initializePolygon () {
   drawingManager.setMap(map);
 }
 
+//set map controls
 function setMapControls () {
   //push custom controls to the map
   map.controls[google.maps.ControlPosition.TOP_LEFT].push(leftControl);
@@ -420,17 +435,172 @@ function setMapControls () {
   map.controls[google.maps.ControlPosition.LEFT].push(polygonPanel);
 
   map.controls[google.maps.ControlPosition.LEFT].push(visitsPanel);
+
+  map.controls[google.maps.ControlPosition.LEFT].push(pieChart);
 }
 
-function saveDataToSessionStorage(data)
-{
-    var a = [];
-    // Parse the serialized data back into an aray of objects
-    a = JSON.parse(sessionStorage.getItem('session')) || [];
-    // Push the new data (whether it be an object or anything else) onto the array
-    a.push(data);
-    // Alert the array value
-    console.log(a);  // Should be something like [Object array]
-    // Re-serialize the array back into a string and store it in localStorage
-    sessionStorage.setItem('session', JSON.stringify(a));
+function visitRestaurant(index) {
+
+  markers[index].visits++;
+  markers[index].isEdited = true;
+
+  if (markers[index].type === "FastFood") {
+    fastFoodCount++;
+  } else if (markers[index].type === "Chinese") {
+    chineseCount++;
+  } else if (markers[index].type === "Filipino") {
+    filipinoCount++;
+  } else if (markers[index].type === "Japanese") {
+    japaneseCount++;
+  } else if (markers[index].type === "Korean") {
+    koreanCount++;
+  } else if (markers[index].type === "American/Western") {
+    americanCount++;
+  } else if (markers[index].type === "Beverage Shop") {
+    beverageCount++;
+  }
+
+  updatePieChartData();
+
+  reloadInfoWindow(index);  
 }
+
+function reloadInfoWindow(index) {
+
+  var modifiedRestaurantInfo = 
+  "<div class = 'infoWindow'>" +
+    '<h4>' + markers[index].title + '</h4>' +
+    '<br./>' +
+
+    "<div class='infoDivs'>" +
+      "<p style='display:inline'><b>Restaurant Type:  </b></p>" +
+      "<p style='display:inline'>" + markers[index].type + '</p>' +
+    "</div>" +
+
+    "<div class='infoDivs'>" +
+      "<p style='display:inline'><b>Description:  </b></p>" +
+      "<p style='display:inline'>" + markers[index].description + '</p>' +
+    "</div>" +
+
+    "<div class='infoDivs'>" +
+      "<p style='display:inline'><b>Specialty:  </b></p>" +
+      "<p style='display:inline'>" + markers[index].specialty + '</p>' +
+    "</div>" +
+
+    "<div class='infoDivs'>" +
+      "<p style='display:inline'><b>Visits:  </b></p>" +
+      "<p style='display:inline'>" + markers[index].visits + '</p>' +
+    "</div>" +
+    
+    "<button id='getDirections' class='btn btn-outline-primary infoWindowButton' onclick='calcRoute();'>Get Directions</button>" +
+
+    "<button id='visitRestaurant' class='btn btn-outline-primary infoWindowButton' onclick='visitRestaurant("+index+");'>Visit Restaurant</button>" +
+    
+  '</div>';
+
+  this.infoWindow.setContent(modifiedRestaurantInfo);
+}
+
+function computeData() {
+    for (i = 0; i < markers.length; i++) {
+      if (markers[i].type === "FastFood") {
+        fastFoodCount = fastFoodCount+markers[i].visits;
+      } else if (markers[i].type === "Chinese") {
+        chineseCount = chineseCount+markers[i].visits;
+      } else if (markers[i].type === "Filipino") {
+        filipinoCount = filipinoCount+markers[i].visits;
+      } else if (markers[i].type === "Japanese") {
+        japaneseCount = japaneseCount+markers[i].visits;
+      } else if (markers[i].type === "Korean") {
+        koreanCount = koreanCount+markers[i].visits;
+      } else if (markers[i].type === "American/Western") {
+        americanCount = americanCount+markers[i].visits;
+      } else if (markers[i].type === "Beverage Shop") {
+        beverageCount = beverageCount+markers[i].visits;
+      }
+    };
+
+    chartData.push(fastFoodCount);
+    chartData.push(chineseCount);
+    chartData.push(filipinoCount);
+    chartData.push(japaneseCount);
+    chartData.push(koreanCount);
+    chartData.push(americanCount);
+    chartData.push(beverageCount);
+}
+
+function loadPieChart() {
+
+  computeData();
+  
+  pieChart = document.getElementById('pieChart');
+
+  content = document.getElementById('myChart').getContext('2d');
+  myChart = new Chart(content, {
+      type: 'pie',
+      responsive: true,
+      data: {
+          labels: [
+            'FastFood',
+            'Chinese', 
+            'Filipino', 
+            'Japanese', 
+            'Korean', 
+            'American/Western',
+            'Beverage Shop'
+          ],
+          datasets: [{
+              label: 'Visits',
+              data: chartData,
+              backgroundColor: [
+                  'rgba(44, 252, 3, 0.2)',
+                  'rgba(9, 7, 54, 0.2)',
+                  'rgba(23, 255, 228, 0.2)',
+                  'rgba(215, 237, 17, 0.2)',
+                  'rgba(237, 17, 17, 0.2)',
+                  'rgba(63, 12, 89, 0.2)',
+                  'rgba(240, 0, 216, 0.2)'
+
+              ],
+              borderColor: [
+                  'rgba(44, 252, 3, 1)',
+                  'rgba(9, 7, 54, 1)',
+                  'rgba(23, 255, 228, 1)',
+                  'rgba(215, 237, 17, 1)',
+                  'rgba(237, 17, 17, 1)',
+                  'rgba(63, 12, 89, 1)',
+                  'rgba(240, 0, 216, 1)',
+              ],
+              borderWidth: 1
+          }]
+      },
+      options: {
+        plugins: {
+          legend: {
+              display: false,
+          }
+        },
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+      },
+  });
+};
+
+function updatePieChartData() {
+
+  chartData = [];
+
+  chartData.push(fastFoodCount);
+  chartData.push(chineseCount);
+  chartData.push(filipinoCount);
+  chartData.push(japaneseCount);
+  chartData.push(koreanCount);
+  chartData.push(americanCount);
+  chartData.push(beverageCount);
+
+  myChart.data.datasets[0].data = chartData;
+  myChart.update();
+};
