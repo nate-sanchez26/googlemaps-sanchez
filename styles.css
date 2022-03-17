@@ -45,9 +45,14 @@
     background-color: white;
   }
 
-  #getDirections {
+  .infoWindowButton {
     margin-top: 10px;
   }
+
+  /* .infoWindow {
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    border-radius: 10px;
+  } */
 
   #polygonInfo {
     background-color: white;
@@ -72,6 +77,15 @@
     border-radius: 10px;
   }
 
+  #placeVisits {
+    background-color: white;
+    padding: 10px;
+    opacity: 80%;
+    margin: 10px;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    border-radius: 10px;
+  }
+
   #restaurantTypeContainer {
     padding: 5px;
     margin-bottom: 10px;
@@ -84,4 +98,9 @@
 
   .infoButtons {
     align-items: center;
+    margin: auto;
+  }
+
+  .infoDivs {
+    padding:10px;
   }
