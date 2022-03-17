@@ -1,0 +1,70 @@
+{"restaurants" : [
+  {
+    "name":"Jollibee",  
+    "coor":{
+      "lat":10.315496186027332, 
+      "lng":123.8851858195529
+    }, 
+    "info":{
+      "specialty":["Chickenjoy", "Burgers"], 
+      "type":"FastFood",
+      "description": "The Philippines' most famous fastfood chain. Jollibee's signature products are their burgers and world-famous chickenjoy."
+    },
+    "visits" : 32
+  },
+
+  {
+    "name":"Dimsum Break", 
+    "coor":{
+      "lat":10.315189144810086, 
+      "lng":123.88434384468515
+    },
+    "info":{
+      "specialty":["Dimsum", "Noodles"], 
+      "type":"Chinese",
+      "description": "A local chinese food chain. Dimsum break offers delicious dimsums, noodles, and rolls."
+    },
+    "visits" : 12
+  },
+
+  {
+    "name":"Malou's Pochero", 
+    "coor":{
+      "lat":10.315125826718594, 
+      "lng":123.89013099800937
+    }, 
+    "info":{
+      "specialty":["Pochero"], 
+      "type":"Filipino",
+      "description": "Pochero is a cebuano dish which is equivalent to the tagalogs' Bulalo. Here at Malou's they do Pochero well!"
+    },
+    "visits" : 11
+  },
+  
+  {
+    "name":"Chowking", 
+    "coor":{
+      "lat":10.316004131634337, 
+      "lng":123.88567504297937
+    }, 
+    "info":{
+      "specialty":["Lauriat, Rice Toppings"], 
+      "type":"Chinese",
+      "description": "The biggest chinese fastfood chain in the Philippines. Chowking's lauriats are just amazing."
+    },
+    "visits" : 16
+  },
+  {
+    "name":"McDonald's", 
+    "coor":{
+      "lat":10.310680876301069, 
+      "lng":123.89307523346073
+    }, 
+    "info":{
+      "specialty":["Burgers, Fries"], 
+      "type":"Filipino",
+      "description": "While not as popular as Jollibee in the Philippines, McDonald's burgers and fries are still some of the best in the world."
+    },
+    "visits" : 89
+  }
+]}
