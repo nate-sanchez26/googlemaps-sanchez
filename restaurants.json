@@ -54,6 +54,7 @@
     },
     "visits" : 16
   },
+
   {
     "name":"McDonald's", 
     "coor":{
@@ -62,9 +63,219 @@
     }, 
     "info":{
       "specialty":["Burgers, Fries"], 
-      "type":"Filipino",
+      "type":"FastFood",
       "description": "While not as popular as Jollibee in the Philippines, McDonald's burgers and fries are still some of the best in the world."
     },
     "visits" : 89
+  },
+
+  {
+    "name":"House of Lechon", 
+    "coor":{
+      "lat":10.317747260110714, 
+      "lng":123.90171332854666
+    }, 
+    "info":{
+      "specialty":["Lechon"], 
+      "type":"Filipino",
+      "description": "House of Lechon is simply one of the best lechon houses in Cebu. They have a nice and spacious dining place as well. It's definitely worth checking out."
+    },
+    "visits" : 76
+  },
+
+  {
+    "name":"Sachi Authentic Japanese Ramen And Okonomiyaki", 
+    "coor":{
+      "lat":10.317588148108037, 
+      "lng":123.90569311050267
+    }, 
+    "info":{
+      "specialty":["Ramen, Okonomiyaki"], 
+      "type":"Japanese",
+      "description": "Sachi is one of the more well-known Ramen places in Cebu. They have good ramen and other Japanese dishes."
+    },
+    "visits" : 32
+  },
+
+  {
+    "name":"Starbucks Coffee", 
+    "coor":{
+      "lat":10.318420729691411, 
+      "lng":123.9050316288481       
+    }, 
+    "info":{
+      "specialty":["Coffee", "Pastries"], 
+      "type":"Beverage Shop",
+      "description": "Starbucks has the best coffee in the world, hands down."
+    },
+    "visits" : 99
+  },
+
+  {
+    "name":"Starbucks Reserve", 
+    "coor":{
+      "lat":10.33022780416754, 
+      "lng":123.90699860724446
+    }, 
+    "info":{
+      "specialty":["Coffee", "Pastries"], 
+      "type":"Beverage Shop",
+      "description": "Starbucks has the best coffee in the world, hands down. Starbucks Reserve is even better!"
+    },
+    "visits" : 112
+  },
+
+  {
+    "name":"Chatime", 
+    "coor":{
+      "lat":10.318837264959315, 
+      "lng":123.90490278021302
+    }, 
+    "info":{
+      "specialty":["Milk Tea"], 
+      "type":"Beverage Shop",
+      "description": "ChaTime is one of the best milk tea shops you can find in the Philippines. The Pearl Milk Tea here is great."
+    },
+    "visits" : 99
+  },
+
+  {
+    "name":"Sugbo Mercado", 
+    "coor":{
+      "lat":10.332169099243936, 
+      "lng":123.90565943435591 
+    }, 
+    "info":{
+      "specialty":["Any"], 
+      "type":"Filipino",
+      "description": "If you're looking for variety, Sugbo Mercado is a great choice. They have a lot of Filipino dishes as well as dishes from other countries."
+    },
+    "visits" : 122
+  },
+
+  {
+    "name":"Samgyupsalamat Unli-Korean BBQ", 
+    "coor":{
+      "lat":10.32505302704002, 
+      "lng":123.91893736318214       
+    }, 
+    "info":{
+      "specialty":["Samgyupsal"], 
+      "type":"Korean",
+      "description": "The best Korean Barbecue shop in the Philippines. They use briquettes for cooking which adds a smokey flavor to the cooked meats."
+    },
+    "visits" : 122
+  },
+
+  {
+    "name":"Samgyupsalamat Unli-Korean BBQ", 
+    "coor":{
+      "lat":10.32535820032759, 
+      "lng":123.91929652661392
+    }, 
+    "info":{
+      "specialty":["Samgyupsal", "Kimchi Jjigae"], 
+      "type":"Korean",
+      "description": "One of the up and coming samgyupsal brands in the Philippines. They have, in my opinion, the best Kimchi jjigaes."
+    },
+    "visits" : 95
+  },
+
+  {
+    "name":"Ekit Food Haus", 
+    "coor":{
+      "lat":10.326176075321108, 
+      "lng":123.91371757556131
+    }, 
+    "info":{
+      "specialty":["Pochero"], 
+      "type":"Filipino",
+      "description": "This is one of those hole-in-the-wall places you definitely have to try out. They specialize in Pochero but don't sleep on their other offerings 'coz they're all equally good!"
+    },
+    "visits" : 56
+  },
+
+  {
+    "name":"Larangan sa Pasil - the original", 
+    "coor":{
+      "lat":10.292164920203174, 
+      "lng":123.89153586262984
+    }, 
+    "info":{
+      "specialty":["Larang"], 
+      "type":"Filipino",
+      "description": "Larang is one of the must-try dishes of Cebu. If you're looking to get the best one, then come on over to Pasil."
+    },
+    "visits" : 88
+  },
+
+  {
+    "name":"Larangan sa Ramos", 
+    "coor":{
+      "lat":10.304322703100858, 
+      "lng":123.89979222638212
+    }, 
+    "info":{
+      "specialty":["Larang"], 
+      "type":"Filipino",
+      "description": "Probably the best known Larangan among the Cebuanos. This place also has some great Larang."
+    },
+    "visits" : 65
+  },
+
+  {
+    "name":"Larang De Chupadidos", 
+    "coor":{
+      "lat":10.304063986986273, 
+      "lng":123.8993655951791
+    }, 
+    "info":{
+      "specialty":["Larang"], 
+      "type":"Filipino",
+      "description": "Larang is one of the must-try dishes of Cebu. This place also serves it."
+    },
+    "visits" : 36
+  },
+
+  {
+    "name":"Casa Verde", 
+    "coor":{
+      "lat":10.31923265351689, 
+      "lng":123.90494654020837
+    }, 
+    "info":{
+      "specialty":["Baby back ribs"], 
+      "type":"Filipino",
+      "description": "A Cebu original specializing in baby back ribs."
+    },
+    "visits" : 67
+  },
+
+  {
+    "name":"Wingers Unlimited", 
+    "coor":{
+      "lat":10.310523256798534, 
+      "lng":123.89576092684948
+    }, 
+    "info":{
+      "specialty":["Chicken Wings"], 
+      "type":"American/Western",
+      "description": "Wingers serves fantastic chicken wings. And the best part - they're unlimited!"
+    },
+    "visits" : 99
+  },
+  
+  {
+    "name":"S&R New York Style Pizza", 
+    "coor":{
+      "lat":10.318356793029576, 
+      "lng":123.90518396843275
+    }, 
+    "info":{
+      "specialty":["Pizza"], 
+      "type":"American/Western",
+      "description": "I love the Pizza at SnR. They also have other delicious offerings like the clam chowder and fried chicken"
+    },
+    "visits" : 102
   }
 ]}

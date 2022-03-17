@@ -39,6 +39,7 @@ var polygonPanel;
 var restaurantTypeControl;
 var directionControl;
 var directionPanel;
+var visitsPanel;
 
 //initialize map
 function initMap() {
@@ -56,6 +57,7 @@ function initMap() {
   directionControl = document.getElementById('directionControl');
   directionPanel = document.getElementById('output');
   polygonPanel = document.getElementById('polygonInfo');
+  visitsPanel = document.getElementById('placeVisits');
 
   //retrieve all restaurants within 2200 radius
   // markerRequest = {
@@ -71,17 +73,13 @@ function initMap() {
   setCountArea();
   
   //plot multiple restaurants across Cebu City
-  // placesService.nearbySearch(markerRequest, (result) => {
-    
-  // });
-
   $.getJSON('./restaurants.json', function(result) {
     restoData = result.restaurants; 
     console.log(restoData);
 
     for (let i = 0; i < restoData.length; i++) {
       plotMarkers(restoData[i], infoWindow, i);
-    }
+    };
     
   });
 
@@ -147,6 +145,8 @@ function plotMarkers(result, infoWindow, index) {
   var i = index;
   console.log(index)
 
+
+
   var restaurantType = result.info.type;
   var restaurantDescription = result.info.description;
   var restaurantSpecialty = result.info.specialty;
@@ -204,6 +204,7 @@ function plotMarkers(result, infoWindow, index) {
       map.setZoom(15);
 
       setNavigation (restaurantTitle, restaurantPosition, currentMarkerName);
+
     });
 
     markers.push(marker);
@@ -232,7 +233,7 @@ function filterMarkers(category) {
     case "FastFood":
       for (i = 0; i < markers.length; i++) {
         marker = markers[i];
-        // if category is "hotel"
+        // if category is "FastFood"
         if (marker.type === "FastFood") {
           marker.setVisible(true);
         }
@@ -245,7 +246,7 @@ function filterMarkers(category) {
     case "Chinese":
       for (i = 0; i < markers.length; i++) {
         marker = markers[i];
-        // if category is "bar"
+        // if category is "Chinese"
         if (marker.type === "Chinese") {
           marker.setVisible(true);
         }
@@ -258,8 +259,61 @@ function filterMarkers(category) {
     case "Filipino":
       for (i = 0; i < markers.length; i++) {
         marker = markers[i];
-        // if category is "cafe"
+        // if category is "Filipino"
         if (marker.type === "Filipino") {
+          marker.setVisible(true);
+        }
+        // Categories don't match 
+        else {
+          marker.setVisible(false);
+        }
+      }
+      break;
+      case "Japanese":
+      for (i = 0; i < markers.length; i++) {
+        marker = markers[i];
+        // if category is "Japanese"
+        if (marker.type === "Japanese") {
+          marker.setVisible(true);
+        }
+        // Categories don't match 
+        else {
+          marker.setVisible(false);
+        }
+      }
+      break;
+      case "Korean":
+      for (i = 0; i < markers.length; i++) {
+        marker = markers[i];
+        // if category is "Korean"
+        if (marker.type === "Korean") {
+          marker.setVisible(true);
+        }
+        // Categories don't match 
+        else {
+          marker.setVisible(false);
+        }
+      }
+      
+      break;
+      case "American/Western":
+      for (i = 0; i < markers.length; i++) {
+        marker = markers[i];
+        // if category is "American/Western"
+        if (marker.type === "American/Western") {
+          marker.setVisible(true);
+        }
+        // Categories don't match 
+        else {
+          marker.setVisible(false);
+        }
+      }
+      break;
+      case "Beverage Shop":
+      for (i = 0; i < markers.length; i++) {
+        marker = markers[i];
+        // if category is "Beverage Shop"
+        if (marker.type === "Beverage Shop") {
           marker.setVisible(true);
         }
         // Categories don't match 
@@ -364,5 +418,19 @@ function setMapControls () {
   directionPanel.style.display = 'none';
 
   map.controls[google.maps.ControlPosition.LEFT].push(polygonPanel);
+
+  map.controls[google.maps.ControlPosition.LEFT].push(visitsPanel);
 }
 
+function saveDataToSessionStorage(data)
+{
+    var a = [];
+    // Parse the serialized data back into an aray of objects
+    a = JSON.parse(sessionStorage.getItem('session')) || [];
+    // Push the new data (whether it be an object or anything else) onto the array
+    a.push(data);
+    // Alert the array value
+    console.log(a);  // Should be something like [Object array]
+    // Re-serialize the array back into a string and store it in localStorage
+    sessionStorage.setItem('session', JSON.stringify(a));
+}
