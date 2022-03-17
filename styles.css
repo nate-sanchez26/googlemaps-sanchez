@@ -3,7 +3,7 @@
   }  */
   
   #map {
-    height: 790px;
+    height: 795px;
     width: 100%;
 
     display: flex;
@@ -49,11 +49,6 @@
     margin-top: 10px;
   }
 
-  /* .infoWindow {
-    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-    border-radius: 10px;
-  } */
-
   #polygonInfo {
     background-color: white;
     padding: 10px;
@@ -77,15 +72,6 @@
     border-radius: 10px;
   }
 
-  #placeVisits {
-    background-color: white;
-    padding: 10px;
-    opacity: 80%;
-    margin: 10px;
-    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-    border-radius: 10px;
-  }
-
   #restaurantTypeContainer {
     padding: 5px;
     margin-bottom: 10px;
@@ -103,4 +89,25 @@
 
   .infoDivs {
     padding:10px;
+  }
+
+  #pieChart {
+    text-align: center;
+
+    width: 260px !important;
+    height: 300px !important; 
+
+    background-color: white;
+
+    padding: 3px;
+    margin-left: 10px;
+    margin-top: 15px;
+    border: 1px gray;
+    opacity: 80%;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    border-radius: 10px;
+  }
+
+  #pieChartLabel {
+    padding:5px;
   }
