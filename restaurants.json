@@ -291,5 +291,118 @@
       "description": "Acacia Steakhouse serves delicious steaks."
     },
     "visits" : 22
+  },
+
+  {
+    "name":"La Vie Parisienne", 
+    "coor":{
+      "lat":10.32622525138593, 
+      "lng":123.89817118635234
+    }, 
+    "info":{
+      "specialty":["Wines, Croissants"], 
+      "type":"American/Western",
+      "description": "French restaurant. They offer good wine and croissants. They also have gelato and other good stuff."
+    },
+    "visits" : 56
+  },
+
+  {
+    "name":"J.CO Donuts & Coffee, Cebu IT Park", 
+    "coor":{
+      "lat":10.32888718094647, 
+      "lng":123.90535501160379
+    }, 
+    "info":{
+      "specialty":["Doughnuts"], 
+      "type":"American/Western",
+      "description": "JCo's donuts are some of the best. It's airy and delicious. Must try."
+    },
+    "visits" : 67
+  },
+
+  {
+    "name":"Jonie's Sizzler's & Roast", 
+    "coor":{
+      "lat":10.328686880152938,
+      "lng":123.90578298228947
+    }, 
+    "info":{
+      "specialty":["Sisig"], 
+      "type":"Filipino",
+      "description": "Jonie's serves sizzling and roasted goods. The sisig here is exceptional."
+    },
+    "visits" : 23
+  },
+
+  {
+    "name":"Shakey's Pizza Parlor", 
+    "coor":{
+      "lat":10.328578525487204,
+      "lng":123.90572015665055
+    }, 
+    "info":{
+      "specialty":["Pizza"], 
+      "type":"American/Western",
+      "description": "Pizza parlor. Shakey's has delicious pizza and chicken. Make sure to order some mojos with those."
+    },
+    "visits" : 64
+  },
+
+  {
+    "name":"The Ching Palace", 
+    "coor":{
+      "lat":10.330650357400845,
+      "lng":123.89996648761563
+    }, 
+    "info":{
+      "specialty":["Chinese food"], 
+      "type":"Chinese",
+      "description": "A good chinese restaurant with good reviews."
+    },
+    "visits" : 64
+  },
+
+  {
+    "name":"Tin Gow", 
+    "coor":{
+      "lat":10.325403486498875,
+      "lng":123.90497920051412
+    }, 
+    "info":{
+      "specialty":["Dumplings"], 
+      "type":"Chinese",
+      "description": "Located at Waterfront Hotel. This is Chinese gourmet dining at its finest."
+    },
+    "visits" : 71
+  },
+
+  {
+    "name":"Ming Fu", 
+    "coor":{
+      "lat":10.33080361301305,
+      "lng":123.90704376907625
+    }, 
+    "info":{
+      "specialty":["Dimsum"], 
+      "type":"Chinese",
+      "description": "Great dimsum restaurant. They serve authentic Chinese food here."
+    },
+    "visits" : 54
+  },
+
+  {
+    "name":"Sumo Niku", 
+    "coor":{
+      "lat":10.331082906325236,
+      "lng":123.90687790258868
+    }, 
+    "info":{
+      "specialty":["Yakiniku"], 
+      "type":"Japanese",
+      "description": "New Japanese restaurant located at Ayala Central Bloc Mall."
+    },
+    "visits" : 67
   }
+
 ]}

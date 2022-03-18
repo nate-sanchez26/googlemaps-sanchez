@@ -15,6 +15,11 @@ const cebu = {
   lng:123.90501611051401
 };
 
+const cebuAirport = {
+  lat:10.310663148480833, 
+  lng:123.98020184706628
+};
+
 //map options
 const mapOptions = {
   zoom: 14,
@@ -27,6 +32,10 @@ var directionsService;
 var directionsDisplay;
 var drawingManager;
 var pieChart;
+
+//
+var originLat;
+var originLng;
 
 //chart variables
 var content;
@@ -90,6 +99,9 @@ function initMap() {
 
   //creates a new polygon and listener for drawing polygons
   setCountArea();
+
+  //create Draggable
+  createDragMarker();
   
   //get data from external JSON file
   $.getJSON('./restaurants.json', function(result) {
@@ -262,7 +274,35 @@ function initializePolygon () {
   });
 
   drawingManager.setMap(map);
+};
+
+//create drag marker to simulate user location
+function createDragMarker() {
+  var vMarker = new google.maps.Marker({
+    position: cebuAirport,
+    draggable: true,
+    icon: 'http://maps.google.com/mapfiles/kml/shapes/man.png'
+  });
+  // adds a listener to the marker
+  // gets the coords when drag event ends
+  // then updates the input with the new coords
+  google.maps.event.addListener(vMarker, 'dragend', function (evt) {
+    
+    originLat = parseFloat(evt.latLng.lat());
+    originLng = parseFloat(evt.latLng.lng());
+    console.log(evt);
+    console.log(originLat);
+    console.log(originLng);
+
+    geocodePosition(originLat, originLng);
+
+    map.panTo(evt.latLng);
+  });
+
+  // adds the marker on the map
+  vMarker.setMap(map);
 }
+
 //INITIALIZERS-END
 
 //EVENT HANDLERS-START
@@ -377,7 +417,10 @@ function calcRoute() {
   directionsDisplay.setMap(map);
 
   routeRequest = {
-    origin: "Mactan-Cebu International Airport",
+    origin: {
+      lat: originLat, 
+      lng: originLng
+    },
     destination: {
       lat: currentMarkerLat, 
       lng: currentMarkerLng
@@ -498,9 +541,6 @@ function setNavigation (restaurantTitle, restaurantPosition, currentMarkerName) 
   //set destination
   const toInput = document.getElementById("to");
   toInput.value=currentMarkerName;
-  //set origin 
-  const fromInput = document.getElementById("from");
-  fromInput.value="Mactan-Cebu International Airport";
 }
 
 //close directions panel
@@ -511,6 +551,9 @@ function closePanel() {
   directionsDisplay.setMap(null);
   map.panTo(cebu);
   map.setZoom(14);
+
+  document.getElementById('from').value = "Drag human marker anywhere.";
+  document.getElementById('to').value = "Click on a marker to set.";
 };
 
 //set map controls
@@ -625,4 +668,22 @@ function updatePieChartData(index) {
   myChart.update();
 };
 
-//HELPER FUNCTIONS-START
+function geocodePosition(latitude, longitude) {
+  const fromInput = document.getElementById("from");
+  geocoder = new google.maps.Geocoder();
+  geocoder.geocode
+   ({
+       latLng: {lat:latitude, lng:longitude}
+   }, 
+       function(results, status) 
+       {
+         console.log(results[0].formatted_address);
+           if (status == google.maps.GeocoderStatus.OK) 
+           {
+            fromInput.value = results[0].formatted_address;
+           }
+       }
+   );
+}
+
+//HELPER FUNCTIONS-END
