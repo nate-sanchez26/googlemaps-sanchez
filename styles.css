@@ -55,7 +55,7 @@
     margin-top: 5px;
     margin-left: 10px;
     opacity: 80%;
-    width: 225px; 
+    width: 235px; 
     float: right;
     text-align: center;
     box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
@@ -70,6 +70,7 @@
     opacity: 80%;
     box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
     border-radius: 10px;
+    width: 255px;
   }
 
   #restaurantTypeContainer {
