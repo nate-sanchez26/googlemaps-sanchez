@@ -10,7 +10,10 @@ var currentMarkerLat;
 var currentMarkerLng;
 
 //map center
-const cebu = {lat:10.318813401005881, lng:123.90501611051401};
+const cebu = {
+  lat:10.318813401005881, 
+  lng:123.90501611051401
+};
 
 //map options
 const mapOptions = {
@@ -49,6 +52,16 @@ var japaneseCount = 0;
 var koreanCount = 0; 
 var americanCount = 0; 
 var beverageCount = 0;
+
+var Total;
+
+var fastFoodPct = 0;
+var chinesePct = 0; 
+var filipinoPct = 0; 
+var japanesePct = 0; 
+var koreanPct = 0; 
+var americanPct = 0; 
+var beveragePct = 0;
 
 var chartData = [];
 var visitClicked = false;
@@ -184,9 +197,18 @@ function loadPieChart() {
   pieChart = document.getElementById('pieChart');
 
   content = document.getElementById('myChart').getContext('2d');
+
+  var options = {
+    responsive: true,
+    plugins: {
+      legend: {
+        display: false,
+      },
+    }
+  };
+
   myChart = new Chart(content, {
-      type: 'pie',
-      responsive: true,
+      type: 'doughnut',
       data: {
           labels: [
             'FastFood',
@@ -198,43 +220,32 @@ function loadPieChart() {
             'Beverage Shop'
           ],
           datasets: [{
-              label: 'Visits',
-              data: chartData,
-              backgroundColor: [
-                  'rgba(44, 252, 3, 0.2)',
-                  'rgba(9, 7, 54, 0.2)',
-                  'rgba(23, 255, 228, 0.2)',
-                  'rgba(215, 237, 17, 0.2)',
-                  'rgba(237, 17, 17, 0.2)',
-                  'rgba(63, 12, 89, 0.2)',
-                  'rgba(240, 0, 216, 0.2)'
+            label: 'Visits',
+            data: chartData,
+            backgroundColor: [
+                'rgba(44, 252, 3, 0.2)',
+                'rgba(9, 7, 54, 0.2)',
+                'rgba(23, 255, 228, 0.2)',
+                'rgba(215, 237, 17, 0.2)',
+                'rgba(237, 17, 17, 0.2)',
+                'rgba(63, 12, 89, 0.2)',
+                'rgba(240, 0, 216, 0.2)'
 
-              ],
-              borderColor: [
-                  'rgba(44, 252, 3, 1)',
-                  'rgba(9, 7, 54, 1)',
-                  'rgba(23, 255, 228, 1)',
-                  'rgba(215, 237, 17, 1)',
-                  'rgba(237, 17, 17, 1)',
-                  'rgba(63, 12, 89, 1)',
-                  'rgba(240, 0, 216, 1)',
-              ],
-              borderWidth: 1
+            ],
+            borderColor: [
+                'rgba(44, 252, 3, 1)',
+                'rgba(9, 7, 54, 1)',
+                'rgba(23, 255, 228, 1)',
+                'rgba(215, 237, 17, 1)',
+                'rgba(237, 17, 17, 1)',
+                'rgba(63, 12, 89, 1)',
+                'rgba(240, 0, 216, 1)',
+            ],
+            borderWidth: 1
           }]
       },
-      options: {
-        plugins: {
-          legend: {
-              display: false,
-          }
-        },
-        scales: {
-            y: {
-                beginAtZero: true
-            }
-        }
-      },
-  });
+      options: options,
+    })
 };
 
 //create polygon
@@ -591,6 +602,7 @@ function computeData(index) {
       beverageCount++;
     }
   }
+
   chartData = [];
 
   chartData.push(fastFoodCount);
@@ -600,6 +612,9 @@ function computeData(index) {
   chartData.push(koreanCount);
   chartData.push(americanCount);
   chartData.push(beverageCount);
+
+  Total =  chartData.reduce((a, b) => a + b, 0);
+  console.log(Total);
 }
 
 //update the pie chart when visit data is updated
